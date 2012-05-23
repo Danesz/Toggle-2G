@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/pref_title" >
@@ -5,6 +6,7 @@
             android:key="enableService"
             android:summary="@string/pref_sum_enableService"
             android:title="@string/pref_title_enableService" />
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/auto_activate_entries"
@@ -12,7 +14,7 @@
             android:key="when2Switch"
             android:summary="@string/pref_sum_when2Switch"
             android:title="@string/pref_title_when2Switch" />
-        
+
         <CheckBoxPreference
             android:key="wait4user"
             android:summary="@string/pref_sum_wait4user"
@@ -24,7 +26,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="delay2GEnabled"
-            android:summary="@string/pref_title_when2Switch"
+            android:summary="@string/pref_sum_delay2GEnabled"
             android:title="@string/pref_title_delay2GEnabled" />
 
         <ListPreference
@@ -42,7 +44,7 @@
             android:title="@string/pref_title_batteryLevelEnabled" />
 
         <ListPreference
-            android:defaultValue="30"
+            android:defaultValue="20"
             android:entries="@array/battery_entries"
             android:entryValues="@array/battery_values"
             android:key="batteryLevel"
