@@ -23,7 +23,7 @@ public class Toggle2GBoot extends BroadcastReceiver
 {
 	public void onReceive(Context context, Intent data)
 	{
-		boolean service = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("enableService", false);
+		boolean service = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).getBoolean("enableService", false);
 		
 //		Log.i(Toggle2G.TOGGLE2G, "boot service=" + service);
 		if ( service )

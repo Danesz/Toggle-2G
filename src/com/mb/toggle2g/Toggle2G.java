@@ -63,6 +63,10 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
                                          * according to PRL) AVAILABLE
                                          * Application Settings menu
                                          */
+    static int NETWORK_MODE_LTE_CDMA_EVDO  = 8; // LTE, CDMA and EvDo 
+    static int NETWORK_MODE_LTE_GSM_WCDMA  = 9; // LTE, GSM/WCDMA 
+    static int NETWORK_MODE_LTE_CMDA_EVDO_GSM_WCDMA = 10; // LTE, CDMA, EvDo, GSM/WCDMA 
+    static int NETWORK_MODE_LTE_ONLY       = 11; // LTE Only mode.
 
     public static final String TOGGLE2G = "Toggle2G";
 
@@ -304,12 +308,16 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
 
     public static void loadNetworkSettings(Context context)
     {
-        network2GSelect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("network2gselect", "1"));
-        network3GSelect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("network3gselect", "0"));
-    }
-
-    public static SharedPreferences getPrefs(Context context)
-    {
-        return context.getSharedPreferences("com.mb.toggle2G", Context.MODE_WORLD_WRITEABLE);
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        network2GSelect = Integer.parseInt(defaultSharedPreferences.getString("network2gselect", "1"));
+        
+        String defaultNetwork = "0";
+        if ( !defaultSharedPreferences.contains("network3gselect"))
+        {
+            defaultNetwork = String.valueOf(SetPhoneSettingsV2.getDefaultNetwork());
+            Log.i(Toggle2G.TOGGLE2G, "setting default network to " + defaultNetwork );
+        }
+        
+        network3GSelect = Integer.parseInt(defaultSharedPreferences.getString("network3gselect", defaultNetwork));
     }
 }

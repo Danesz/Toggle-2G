@@ -30,6 +30,24 @@ import android.util.Log;
 
 public class SetPhoneSettingsV2
 {
+    /* NETWORK_MODE_* See ril.h RIL_REQUEST_SET_PREFERRED_NETWORK_TYPE 
+    60     int NETWORK_MODE_WCDMA_PREF     = 0; // GSM/WCDMA (WCDMA preferred) 
+    61     int NETWORK_MODE_GSM_ONLY       = 1; // GSM only 
+    62     int NETWORK_MODE_WCDMA_ONLY     = 2; // WCDMA only 
+    63     int NETWORK_MODE_GSM_UMTS       = 3; // GSM/WCDMA (auto mode, according to PRL)
+    64                                             AVAILABLE Application Settings menu
+    65     int NETWORK_MODE_CDMA           = 4; // CDMA and EvDo (auto mode, according to PRL)
+    66                                             AVAILABLE Application Settings menu
+    67     int NETWORK_MODE_CDMA_NO_EVDO   = 5; // CDMA only 
+    68     int NETWORK_MODE_EVDO_NO_CDMA   = 6; // EvDo only 
+    69     int NETWORK_MODE_GLOBAL         = 7; // GSM/WCDMA, CDMA, and EvDo (auto mode, according to PRL)
+    70                                             AVAILABLE Application Settings menu
+    71     int NETWORK_MODE_LTE_CDMA_EVDO  = 8; // LTE, CDMA and EvDo 
+    72     int NETWORK_MODE_LTE_GSM_WCDMA  = 9; // LTE, GSM/WCDMA 
+    73     int NETWORK_MODE_LTE_CMDA_EVDO_GSM_WCDMA = 10; // LTE, CDMA, EvDo, GSM/WCDMA 
+    74     int NETWORK_MODE_LTE_ONLY       = 11; // LTE Only mode.
+    */ 
+    
     private static final int MESSAGE_GET_PREFERRED_NETWORK_TYPE = 0;
     private static final int MESSAGE_SET_2G = 1;
     private static final int MESSAGE_SET_3G = 2;
@@ -69,12 +87,9 @@ public class SetPhoneSettingsV2
         this.context = context;
         Toggle2G.loadNetworkSettings(context);
 
+        mPhone = loadPhoneObject();
         try
         {
-            Class<?> forName = Class.forName("com.android.internal.telephony.PhoneFactory");
-
-            Method getDefaultPhone = forName.getMethod("getDefaultPhone", new Class[] {});
-            mPhone = getDefaultPhone.invoke(null, new Object[] {});
 
             setPreferredNetworkType = mPhone.getClass().getMethod("setPreferredNetworkType", new Class[] { int.class, Message.class });
             getPreferredNetworkType = mPhone.getClass().getMethod("getPreferredNetworkType", new Class[] { Message.class });
@@ -87,6 +102,37 @@ public class SetPhoneSettingsV2
         }
 
         telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    }
+
+    static Object loadPhoneObject()
+    {
+        try
+        {
+            Class<?> forName = Class.forName("com.android.internal.telephony.PhoneFactory");
+            Method getDefaultPhone = forName.getMethod("getDefaultPhone", new Class[] {});
+            return getDefaultPhone.invoke(null, new Object[] {});
+        }
+        catch (Exception e)
+        {
+            Log.e(Toggle2G.TOGGLE2G, "Error!", e);
+        }
+        return null;
+    }
+    
+    static int getDefaultNetwork()
+    {
+        try
+        {
+            Object phone = loadPhoneObject();
+            Field field = phone.getClass().getField("PREFERRED_NT_MODE");
+            field.setAccessible(true);
+            return field.getInt(phone);
+        }
+        catch (Exception e)
+        {
+            Log.e(Toggle2G.TOGGLE2G, "Error!", e);
+        }
+        return 0;
     }
 
     void getNetwork()
