@@ -64,7 +64,11 @@
 		<item>5</item>
 		<item>6</item>
 		<item>7</item>
-	</string-array>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+    </string-array>
 	<string name="plugin_name">切换 2G</string>
 	<string name="pref_title">选项 切换 2G</string>
 	<string name="pref_title_enableService">自我管理的2G/3G</string>

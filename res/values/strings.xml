@@ -66,7 +66,11 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
-    </string-array>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        </string-array>
     <string-array name="auto_activate_entries">
         <item>Screen On</item>
         <item>Phone Unlock</item>
