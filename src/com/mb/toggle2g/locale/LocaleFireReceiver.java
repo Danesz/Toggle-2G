@@ -16,10 +16,12 @@ package com.mb.toggle2g.locale;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
 import com.mb.toggle2g.SetPhoneSettingsV2;
+import com.mb.toggle2g.Toggle2G;
 import com.mb.toggle2g.Toggle2GService;
 
 public class LocaleFireReceiver extends BroadcastReceiver
@@ -32,10 +34,11 @@ public class LocaleFireReceiver extends BroadcastReceiver
 		{
 			long setting = intent.getLongExtra(LocaleEditActivity.INTENT_EXTRA_SETTING, 0);
 			
-            boolean dataOff = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("dataoff_switch", false );
+            SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context);
+            boolean dataOff = defaultSharedPreferences.getBoolean("dataoff_switch", false );
 			if ( setting == 1 )
 			{
-				Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+				Editor edit = defaultSharedPreferences.edit();
 				edit.putBoolean("enableService", true);
 				edit.commit();
 				
@@ -43,7 +46,7 @@ public class LocaleFireReceiver extends BroadcastReceiver
 			}
 			else if ( setting == 2 )
 			{
-				Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+				Editor edit = defaultSharedPreferences.edit();
 				edit.putBoolean("enableService", false);
 				edit.commit();
 				
@@ -52,7 +55,7 @@ public class LocaleFireReceiver extends BroadcastReceiver
 			}
 			else if ( setting == 3 )
 			{
-				Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+				Editor edit = defaultSharedPreferences.edit();
 				edit.putBoolean("enableService", false);
 				edit.commit();
 				
@@ -61,7 +64,7 @@ public class LocaleFireReceiver extends BroadcastReceiver
 			}
 			else if ( setting == 4 )
 			{
-				Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+				Editor edit = defaultSharedPreferences.edit();
 				edit.putBoolean("enableService", false);
 				edit.commit();
 				

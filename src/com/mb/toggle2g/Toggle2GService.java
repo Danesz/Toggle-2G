@@ -91,21 +91,20 @@ public class Toggle2GService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
+        Log.i(Toggle2G.TOGGLE2G, "service created");
 
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		preferences = Toggle2G.getPreferences(this);
 		boolean service = preferences.getBoolean("enableService", false);
 
 //		Log.i(Toggle2G.TOGGLE2G, "kbps=" + getKBps() );
 		if (running != null || !service)
 		{
-			//Log.i(Toggle2G.TOGGLE2G, "service already running");
+			Log.i(Toggle2G.TOGGLE2G, "service already running");
 			this.stopSelf();
 			return;
 		}
 		running = this;
 		//ToggleAppWidgetProvider.updateWidgets();
-
-		Log.i(Toggle2G.TOGGLE2G, "service created");
 
 		phoneSetter = new SetPhoneSettingsV2(this);
 
@@ -141,24 +140,28 @@ public class Toggle2GService extends Service
 	@Override
 	public void onDestroy()
 	{
-		unregisterReceiver(lockReceiver);
-		unregisterReceiver(unlockReceiver);
-		unregisterReceiver(wifiReceiver);
-        unregisterReceiver(backgrounDataListener);
-		unregisterReceiver(phoneReceiver);
-		unregisterReceiver(batteryReceiver);
+	    if( running != null )
+	    {
+            if (timerRegistered)
+            {
+                timerRegistered = false;
+                unregisterReceiver(timeReceiver);
+            }
 
-		if (timerRegistered)
-		{
-			unregisterReceiver(timeReceiver);
-			timerRegistered = false;
-		}
+            unregisterReceiver(lockReceiver);
+    		unregisterReceiver(unlockReceiver);
+    		unregisterReceiver(wifiReceiver);
+            unregisterReceiver(backgrounDataListener);
+    		unregisterReceiver(phoneReceiver);
+    		unregisterReceiver(batteryReceiver);
+    		
+    	    running = null;
+    	    phoneSetter.getNetwork();
+        }
 
 //		Log.i(Toggle2G.TOGGLE2G, "service destroyed");
 		super.onDestroy();
 
-		running = null;
-		phoneSetter.getNetwork();
 		//ToggleAppWidgetProvider.updateWidgets();
 	}
 
@@ -328,12 +331,12 @@ public class Toggle2GService extends Service
 		Intent intent = new Intent(context, Toggle2GService.class);
 		if (on && running == null)
 		{
-//			Log.i(Toggle2G.TOGGLE2G, "setting service on");
+			Log.i(Toggle2G.TOGGLE2G, "setting service on");
 			context.startService(intent);
 		}
 		else if (!on && running != null)
 		{
-//			Log.i(Toggle2G.TOGGLE2G, "setting service off");
+			Log.i(Toggle2G.TOGGLE2G, "setting service off");
 			Toggle2GService.showNotification( context, false );
 			context.stopService(intent);
 		}
@@ -478,9 +481,10 @@ public class Toggle2GService extends Service
 
 	public static void showNotification( Context context, boolean show )
 	{
-		boolean wait = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("wait4user", false);
-		boolean waitNotify = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("wait4userNotification", false);
-		boolean running = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("enableService", false);
+		SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context);
+        boolean wait = defaultSharedPreferences.getBoolean("wait4user", false);
+		boolean waitNotify = defaultSharedPreferences.getBoolean("wait4userNotification", false);
+		boolean running = defaultSharedPreferences.getBoolean("enableService", false);
 		
 		if ( running && ( Toggle2GService.running.noWifi() || Toggle2GService.running.noData() || Toggle2GService.running.saveBattery() ))
 		{

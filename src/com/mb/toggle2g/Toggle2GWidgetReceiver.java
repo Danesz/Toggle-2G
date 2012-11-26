@@ -35,7 +35,7 @@ public class Toggle2GWidgetReceiver extends BroadcastReceiver
 		
 		Log.i(Toggle2G.TOGGLE2G, "widget request=" + stringExtra);
 
-		SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+		SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context.getApplicationContext());
         if ( "auto".equals( stringExtra ))
 		{
 			Editor edit = defaultSharedPreferences.edit();

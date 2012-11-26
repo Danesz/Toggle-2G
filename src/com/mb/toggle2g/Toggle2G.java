@@ -13,6 +13,9 @@
  */
 package com.mb.toggle2g;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.mb.toggle2g.RootCommand.CommandResult;
 
 import android.app.AlertDialog;
@@ -26,6 +29,8 @@ import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -63,10 +68,11 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
                                          * according to PRL) AVAILABLE
                                          * Application Settings menu
                                          */
-    static int NETWORK_MODE_LTE_CDMA_EVDO  = 8; // LTE, CDMA and EvDo 
-    static int NETWORK_MODE_LTE_GSM_WCDMA  = 9; // LTE, GSM/WCDMA 
-    static int NETWORK_MODE_LTE_CMDA_EVDO_GSM_WCDMA = 10; // LTE, CDMA, EvDo, GSM/WCDMA 
-    static int NETWORK_MODE_LTE_ONLY       = 11; // LTE Only mode.
+    static int NETWORK_MODE_LTE_CDMA_EVDO = 8; // LTE, CDMA and EvDo
+    static int NETWORK_MODE_LTE_GSM_WCDMA = 9; // LTE, GSM/WCDMA
+    static int NETWORK_MODE_LTE_CMDA_EVDO_GSM_WCDMA = 10; // LTE, CDMA, EvDo,
+                                                          // GSM/WCDMA
+    static int NETWORK_MODE_LTE_ONLY = 11; // LTE Only mode.
 
     public static final String TOGGLE2G = "Toggle2G";
 
@@ -76,13 +82,53 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
     {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.preference);
-
-        preparePreferences(this);
-
+        Log.i(TOGGLE2G, "loading preferences");
         DEFAULT_SHARED_PREFERENCES = PreferenceManager.getDefaultSharedPreferences(this);
-        DEFAULT_SHARED_PREFERENCES.registerOnSharedPreferenceChangeListener(this);
+        SharedPreferences phonePreferences = getPhonePreferences(this, true);
+        if ( phonePreferences != null )
+        {
+            Log.i(TOGGLE2G, "using shared preferences");
+            Editor edit = DEFAULT_SHARED_PREFERENCES.edit();
+            Map<String, ?> all = phonePreferences.getAll();
+            for (Entry<String, ?> entry : all.entrySet())
+            {
+                Object v = entry.getValue();
+                String key = entry.getKey();
+                if (v instanceof Boolean)
+                {
+                    edit.putBoolean(key, ((Boolean) v).booleanValue());
+                }
+                else if (v instanceof Float)
+                {
+                    edit.putFloat(key, ((Float) v).floatValue());
+                }
+                else if (v instanceof Integer)
+                {
+                    edit.putInt(key, ((Integer) v).intValue());
+                }
+                else if (v instanceof Long)
+                {
+                    edit.putLong(key, ((Long) v).longValue());
+                }
+                else if (v instanceof String)
+                {
+                    edit.putString(key, ((String) v));
+                }
+            }
+            edit.commit();
+        }
+        else
+        {
+            preparePreferences(this);
+        }
 
+        addPreferencesFromResource(R.xml.preference);
+        
+        // setup the preferences
+        boolean service = DEFAULT_SHARED_PREFERENCES.getBoolean("enableService", false);
+        otherSettings(service);
+
+        DEFAULT_SHARED_PREFERENCES.registerOnSharedPreferenceChangeListener(this);
         if (!DEFAULT_SHARED_PREFERENCES.contains("wait4userNotification"))
         {
             // backward compatibility
@@ -113,15 +159,6 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
         p = getPreferenceScreen().findPreference("wait4userNotification");
         p.setOnPreferenceClickListener(this);
 
-        // boolean service = getPrefs( this ).getBoolean("enableService",
-        // false);
-        boolean service = DEFAULT_SHARED_PREFERENCES.getBoolean("enableService", false);
-        if (service)
-        {
-            Toggle2GService.checkLockService(this, true);
-        }
-        otherSettings(service);
-
         loadNetworkSettings(this);
 
         try
@@ -133,6 +170,52 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
         catch (Exception e)
         {
         }
+        
+        if (service)
+        {
+            Toggle2GService.checkLockService(this, true);
+        }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        boolean service = getPreferences(this).getBoolean("enableService", false);
+        otherSettings(service);
+    }
+    
+    public static SharedPreferences getPreferences(Context context)
+    {
+        SharedPreferences phonePreferences = getPhonePreferences(context, false);
+        if ( phonePreferences == null )
+        {
+            return PreferenceManager.getDefaultSharedPreferences(context);
+        }
+        return phonePreferences;
+    }
+
+    public static SharedPreferences getPhonePreferences(Context context, boolean log)
+    {
+        try
+        {
+            Context con = context.createPackageContext("com.android.phone", Context.CONTEXT_IGNORE_SECURITY);
+            SharedPreferences sharedPreferences = con.getSharedPreferences("toggle2g", Context.MODE_WORLD_WRITEABLE);
+            if ( log && sharedPreferences == null )
+            {
+                Log.e(TOGGLE2G, "Using Legacy Settings becuase shared file not returned");
+            }
+            return sharedPreferences;
+        }
+        catch (Exception e1)
+        {
+            if ( log )
+            {
+                Log.e(TOGGLE2G, "Using Legacy Settings", e1);
+            }
+        }
+
+        return null;
     }
 
     public static void preparePreferences(final Context context)
@@ -146,7 +229,7 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
             {
                 CommandResult runWaitFor = cmd.su.runWaitFor("mkdir " + SHARED_PREFS_FOLDER);
                 Log.i(TOGGLE2G, "mkdir " + SHARED_PREFS_FOLDER + ": " + runWaitFor.stdout);
-                
+
                 runWaitFor = cmd.su.runWaitFor("chmod 777 " + APP_FOLDER);
                 Log.i(TOGGLE2G, "chmod 777 " + APP_FOLDER + ": " + runWaitFor.stdout);
 
@@ -175,11 +258,39 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
+        SharedPreferences phonePreferences = getPhonePreferences(this, false);
+        if ( phonePreferences != null )
+        {
+            Map<String, ?> all = sharedPreferences.getAll();
+            Editor edit = phonePreferences.edit();
+            Object v = all.get(key);
+            if (v instanceof Boolean)
+            {
+                edit.putBoolean(key, ((Boolean) v).booleanValue());
+            }
+            else if (v instanceof Float)
+            {
+                edit.putFloat(key, ((Float) v).floatValue());
+            }
+            else if (v instanceof Integer)
+            {
+                edit.putInt(key, ((Integer) v).intValue());
+            }
+            else if (v instanceof Long)
+            {
+                edit.putLong(key, ((Long) v).longValue());
+            }
+            else if (v instanceof String)
+            {
+                edit.putString(key, ((String) v));
+            }
+            edit.commit();
+        }
+        
+        boolean service = sharedPreferences.getBoolean("enableService", false);
         if ("enableService".equals(key))
         {
-            boolean service = sharedPreferences.getBoolean("enableService", false);
             Toggle2GService.checkLockService(this, service);
-            otherSettings(service);
         }
         else if ("network2gselect".equals(key))
         {
@@ -207,32 +318,56 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
             getPreferenceScreen().findPreference("wait4userNotification").setEnabled(wait);
             getPreferenceScreen().findPreference("when2Switch").setEnabled(!wait);
         }
+        otherSettings(service);
     }
 
     private void otherSettings(boolean enabled)
     {
-        getPreferenceScreen().findPreference("when2Switch").setEnabled(enabled);
-        getPreferenceScreen().findPreference("2g_wifi").setEnabled(enabled);
-        getPreferenceScreen().findPreference("2g_dataoff").setEnabled(enabled);
-        getPreferenceScreen().findPreference("dataoff_switch").setEnabled(enabled);
-        getPreferenceScreen().findPreference("dontCheckPluggedIn").setEnabled(enabled);
+        SharedPreferences preferences = getPreferences(this);
+        
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("enableService")).setChecked(enabled);
 
-        boolean w4u = DEFAULT_SHARED_PREFERENCES.getBoolean("wait4user", false);
+        ((ListPreference) getPreferenceScreen().findPreference("when2Switch")).setValue(preferences.getString("when2Switch", "0"));
+        getPreferenceScreen().findPreference("when2Switch").setEnabled(enabled);
+
+        boolean w4u = preferences.getBoolean("wait4user", false);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("wait4user")).setChecked(w4u);
         getPreferenceScreen().findPreference("wait4user").setEnabled(enabled);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("wait4userNotification")).setChecked(preferences.getBoolean("wait4userNotification", false));
         getPreferenceScreen().findPreference("wait4userNotification").setEnabled(w4u && enabled);
 
-        boolean bat = DEFAULT_SHARED_PREFERENCES.getBoolean("delay2GEnabled", true);
+        boolean bat = preferences.getBoolean("delay2GEnabled", true);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("delay2GEnabled")).setChecked(bat);
         getPreferenceScreen().findPreference("delay2GEnabled").setEnabled(enabled);
+        ((ListPreference) getPreferenceScreen().findPreference("delay2GTime")).setValue(preferences.getString("delay2GTime", "10"));
         getPreferenceScreen().findPreference("delay2GTime").setEnabled(bat && enabled);
 
-        boolean sleep2g = DEFAULT_SHARED_PREFERENCES.getBoolean("batteryLevelEnabled", true);
+        boolean sleep2g = preferences.getBoolean("batteryLevelEnabled", true);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("batteryLevelEnabled")).setChecked(sleep2g);
         getPreferenceScreen().findPreference("batteryLevelEnabled").setEnabled(enabled);
+        ((ListPreference) getPreferenceScreen().findPreference("batteryLevel")).setValue(preferences.getString("batteryLevel", "20"));
         getPreferenceScreen().findPreference("batteryLevel").setEnabled(sleep2g && enabled);
 
-        boolean kbps = DEFAULT_SHARED_PREFERENCES.getBoolean("kbps_enabled", false);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("2g_wifi")).setChecked(preferences.getBoolean("2g_wifi", true));
+        getPreferenceScreen().findPreference("2g_wifi").setEnabled(enabled);
+
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("2g_dataoff")).setChecked(preferences.getBoolean("2g_dataoff", true));
+        getPreferenceScreen().findPreference("2g_dataoff").setEnabled(enabled);
+        
+        boolean kbps = preferences.getBoolean("kbps_enabled", false);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("kbps_enabled")).setChecked(kbps);
         getPreferenceScreen().findPreference("kbps_enabled").setEnabled(enabled);
+        ((EditTextPreference) getPreferenceScreen().findPreference("kbps")).setText(preferences.getString("kbps", "2"));
         getPreferenceScreen().findPreference("kbps").setEnabled(kbps && enabled);
 
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("dataoff_switch")).setChecked(preferences.getBoolean("dataoff_switch", false));
+        getPreferenceScreen().findPreference("dataoff_switch").setEnabled(enabled);
+
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("dontCheckPluggedIn")).setChecked(preferences.getBoolean("dontCheckPluggedIn", false));
+        getPreferenceScreen().findPreference("dontCheckPluggedIn").setEnabled(enabled);
+
+        ((ListPreference) getPreferenceScreen().findPreference("network2gselect")).setValue(preferences.getString("network2gselect", "1"));
+        ((ListPreference) getPreferenceScreen().findPreference("network3gselect")).setValue(preferences.getString("network3gselect", "0"));
     }
 
     @Override
@@ -308,16 +443,16 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
 
     public static void loadNetworkSettings(Context context)
     {
-        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context);
         network2GSelect = Integer.parseInt(defaultSharedPreferences.getString("network2gselect", "1"));
-        
+
         String defaultNetwork = "0";
-        if ( !defaultSharedPreferences.contains("network3gselect"))
+        if (!defaultSharedPreferences.contains("network3gselect"))
         {
             defaultNetwork = String.valueOf(SetPhoneSettingsV2.getDefaultNetwork());
-            Log.i(Toggle2G.TOGGLE2G, "setting default network to " + defaultNetwork );
+            Log.i(Toggle2G.TOGGLE2G, "setting default network to " + defaultNetwork);
         }
-        
+
         network3GSelect = Integer.parseInt(defaultSharedPreferences.getString("network3gselect", defaultNetwork));
     }
 }

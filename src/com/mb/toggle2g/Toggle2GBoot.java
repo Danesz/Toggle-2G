@@ -17,18 +17,32 @@ package com.mb.toggle2g;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 public class Toggle2GBoot extends BroadcastReceiver
 {
 	public void onReceive(Context context, Intent data)
 	{
-		boolean service = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext()).getBoolean("enableService", false);
+	    boolean service = false;
+	    SharedPreferences phonePreferences = Toggle2G.getPhonePreferences(context, true);
+        if ( phonePreferences != null )
+	    {
+            Log.i(Toggle2G.TOGGLE2G, "using shared preferences");
+	        service = phonePreferences.getBoolean("enableService", false);
+	    }
+        else
+        {
+            service = Toggle2G.getPreferences(context.getApplicationContext()).getBoolean("enableService", false);
+        }
 		
-//		Log.i(Toggle2G.TOGGLE2G, "boot service=" + service);
+		Log.i(Toggle2G.TOGGLE2G, "boot service=" + service);
 		if ( service )
 		{
-	        Toggle2G.preparePreferences(context);
+		    if ( phonePreferences == null )
+		    {
+		        Toggle2G.preparePreferences(context);
+		    }
 			Toggle2GService.checkLockService(context, true);
 		}
 	}
