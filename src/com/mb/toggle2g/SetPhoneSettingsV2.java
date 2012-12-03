@@ -119,7 +119,7 @@ public class SetPhoneSettingsV2
         return null;
     }
     
-    static int getDefaultNetwork()
+    static Integer getDefaultNetwork()
     {
         try
         {
@@ -132,7 +132,7 @@ public class SetPhoneSettingsV2
         {
             Log.e(Toggle2G.TOGGLE2G, "Error!", e);
         }
-        return 0;
+        return null;
     }
 
     void getNetwork()
@@ -303,8 +303,8 @@ public class SetPhoneSettingsV2
                                     Log.i(Toggle2G.TOGGLE2G, "Data Setting is now " + getMobileData(context) );
                                 }
                             }
-                            int timeout = (int) SystemClock.uptimeMillis() + delay;
-                            System.out.println("start timeout = " + timeout );
+                            int timeout = (int) ((SystemClock.uptimeMillis() + delay ) / 1000);
+                            Log.e(Toggle2G.TOGGLE2G, "start timeout = " + timeout );
 
                             setPreferredNetworkType.invoke(mPhone, new Object[] { Toggle2G.network2GSelect, setHandler.obtainMessage(MESSAGE_SET_2G, Toggle2G.network2GSelect, timeout) });
                             this.sendEmptyMessageDelayed(MESSAGE_RESTORE_DATA_OFF_MONITORING, delay);
@@ -358,8 +358,8 @@ public class SetPhoneSettingsV2
                                     Log.i(Toggle2G.TOGGLE2G, "Data Setting is now " + getMobileData(context) );
                                 }
                             }
-                            int timeout = (int) SystemClock.uptimeMillis() + delay;
-                            System.out.println("start timeout = " + timeout );
+                            int timeout = (int) ((SystemClock.uptimeMillis() + delay ) / 1000);
+                            Log.e(Toggle2G.TOGGLE2G, "start timeout = " + timeout );
 
                             setPreferredNetworkType.invoke(mPhone, new Object[] { Toggle2G.network3GSelect, setHandler.obtainMessage(MESSAGE_SET_3G, Toggle2G.network3GSelect, timeout) });
                             this.sendEmptyMessageDelayed(MESSAGE_RESTORE_DATA_OFF_MONITORING, delay);
@@ -411,8 +411,8 @@ public class SetPhoneSettingsV2
                                     Log.i(Toggle2G.TOGGLE2G, "Data Setting is now " + getMobileData(context) );
                                 }
                             }
-                            int timeout = (int) SystemClock.uptimeMillis() + delay;
-                            System.out.println("start timeout = " + timeout );
+                            int timeout = (int) ((SystemClock.uptimeMillis() + delay ) / 1000);
+                            Log.e(Toggle2G.TOGGLE2G, "start timeout = " + timeout );
                             
                             setPreferredNetworkType.invoke(mPhone, new Object[] { customNetwork, setHandler.obtainMessage(MESSAGE_SET_CUSTOM, customNetwork, timeout) });
                             this.sendEmptyMessageDelayed(MESSAGE_RESTORE_DATA_OFF_MONITORING, delay);
@@ -469,7 +469,7 @@ public class SetPhoneSettingsV2
                 }
                 break;
             case MESSAGE_RESTORE_DATA_OFF_MONITORING:
-                checkToRestoreData(5000, true);
+                checkToRestoreData(5000);
             }
         }
 
@@ -514,14 +514,17 @@ public class SetPhoneSettingsV2
                     Log.e(Toggle2G.TOGGLE2G, "Error Setting: " + exception);
                     
                     // try again!
-                    int timeout = msg.arg2;
-                    Log.i(Toggle2G.TOGGLE2G, "retry timeout left = " + (timeout - SystemClock.uptimeMillis()));
-                    Log.i(Toggle2G.TOGGLE2G, "set to = " + set );
+                    long timeout = msg.arg2 * 1000;
 
                     Thread.sleep(500);
                     if ( ( settingG == null || set == settingG ) && SystemClock.uptimeMillis() < timeout)
                     {
+                        Log.i(Toggle2G.TOGGLE2G, "retry timeout left = " + (timeout - SystemClock.uptimeMillis()));
                         setPreferredNetworkType.invoke(mPhone, new Object[] { msg.arg1, setHandler.obtainMessage(msg.what, msg.arg1, msg.arg2) });
+                    }
+                    else
+                    {
+                        Log.i(Toggle2G.TOGGLE2G, "retry timeout over, giving up");
                     }
                 }
                 else
@@ -559,16 +562,12 @@ public class SetPhoneSettingsV2
         }
     }
 
-    void checkToRestoreData(int tryFor, boolean reset)
+    void checkToRestoreData(int tryFor)
     {
         Boolean lastSetting = mCurrentDataSetting;
         if( lastSetting != null && lastSetting )
         {
-            Log.i(Toggle2G.TOGGLE2G, "Enabling Data Setting" );
-            if ( reset )
-            {
-                mCurrentDataSetting = null;
-            }
+            Log.i(Toggle2G.TOGGLE2G, "Trying to enable Data Setting" );
             
             setMobileDataEnabled( context, true );
             long timeout = System.currentTimeMillis() + tryFor;
@@ -585,6 +584,7 @@ public class SetPhoneSettingsV2
             }
             Log.i(Toggle2G.TOGGLE2G, "Data Setting is now " + getMobileData(context) );
         }
+        mCurrentDataSetting = null;
     }
     
     
@@ -667,6 +667,7 @@ public class SetPhoneSettingsV2
         }
         catch (Exception e)
         {
+            Log.e(Toggle2G.TOGGLE2G, "getMobileDataEnabled Error!", e);
             return true;
         }
 

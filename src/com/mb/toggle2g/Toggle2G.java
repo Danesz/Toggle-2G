@@ -446,13 +446,18 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
         SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context);
         network2GSelect = Integer.parseInt(defaultSharedPreferences.getString("network2gselect", "1"));
 
-        String defaultNetwork = "0";
-        if (!defaultSharedPreferences.contains("network3gselect"))
+        String defaultNetwork = String.valueOf(SetPhoneSettingsV2.getDefaultNetwork());
+        String useNetwork = "0";
+        if (defaultNetwork != null && !defaultSharedPreferences.contains("network3gselect"))
         {
-            defaultNetwork = String.valueOf(SetPhoneSettingsV2.getDefaultNetwork());
+            useNetwork = defaultNetwork;
             Log.i(Toggle2G.TOGGLE2G, "setting default network to " + defaultNetwork);
         }
 
-        network3GSelect = Integer.parseInt(defaultSharedPreferences.getString("network3gselect", defaultNetwork));
+        network3GSelect = Integer.parseInt(defaultSharedPreferences.getString("network3gselect", useNetwork));
+        if ( !String.valueOf(network3GSelect).equals( defaultNetwork ))
+        {
+            Log.i(Toggle2G.TOGGLE2G, "WARNING: default 3G network is " + defaultNetwork + ", but Toggle2G is set to use " + network3GSelect);
+        }
     }
 }
