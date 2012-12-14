@@ -488,16 +488,24 @@ public class Toggle2GService extends Service
 		SharedPreferences defaultSharedPreferences = Toggle2G.getPreferences(context);
 		boolean running = defaultSharedPreferences.getBoolean("enableService", false);
 		
-		boolean noWifi = Toggle2GService.running.noWifi();
-        boolean noData = Toggle2GService.running.noData();
-        boolean saveBattery = Toggle2GService.running.saveBattery();
-
-        Log.i(Toggle2G.TOGGLE2G, "show notification running=" + running +", noWifi=" + noWifi + ", noData=" + noData + ", saveBattery=" + saveBattery );
-        if ( running && ( noWifi || noData || saveBattery ))
+		if ( isRunning() )
 		{
-			// no 3G if wifi or battery saver
-			show = false;
-		}
+    		boolean noWifi = Toggle2GService.running.noWifi();
+            boolean noData = Toggle2GService.running.noData();
+            boolean saveBattery = Toggle2GService.running.saveBattery();
+    
+            Log.i(Toggle2G.TOGGLE2G, "show notification running=" + running +", noWifi=" + noWifi + ", noData=" + noData + ", saveBattery=" + saveBattery );
+            if ( running && ( noWifi || noData || saveBattery ))
+    		{
+    			// no 3G if wifi or battery saver
+    			show = false;
+    		}
+        }
+        else
+        {
+            Log.i(Toggle2G.TOGGLE2G, "show notification service=no, running=" + running);
+            show = false;
+        }
 		
         boolean wait = defaultSharedPreferences.getBoolean("wait4user", false);
         boolean waitNotify = defaultSharedPreferences.getBoolean("wait4userNotification", false);
