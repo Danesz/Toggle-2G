@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Toggle2G</string>
-    <string name="plugin_name">Toggle 2G</string>
+    <string name="plugin_name">Toggle2G</string>
     <string name="pref_title">Opciones de Toggle2G</string>
     <string name="pref_title_enableService">Gestión automática</string>
     <string name="pref_sum_enableService">Permite gestionar los ajustes 2G/3G de forma automática</string>
@@ -16,7 +16,7 @@
     <string name="pref_title_batteryLevelEnabled">2G si batería baja</string>
     <string name="pref_sum_batteryLevelEnabled">Cambiar a 2G cuando la batería esté baja</string>
     <string name="pref_title_batteryLevel">Umbral de batería</string>
-    <string name="pref_sum_batteryLevel">% de batería para activar 2G</string>
+    <string name="pref_sum_batteryLevel">%% de batería para activar 2G</string>
     <string name="pref_title_2g_wifi">2G si WiFi activado</string>
     <string name="pref_sum_2g_wifi">Cambiar a 2G cuando el WiFi esté activado</string>
     <string name="pref_title_kbps_enabled">No 2G si red en uso</string>

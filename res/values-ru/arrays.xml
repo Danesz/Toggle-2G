@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="battery_entries">
         <item>Off</item>
         <item>10%</item>
@@ -25,6 +26,7 @@
         <item>90</item>
     </string-array>
     <string-array name="delay_entries">
+        <item>Immediate</item>
         <item>2 минуты</item>
         <item>5 минут</item>
         <item>10 минут</item>
@@ -33,6 +35,7 @@
         <item>30 минут</item>
     </string-array>
     <string-array name="delay_values">
+        <item>0</item>
         <item>2</item>
         <item>5</item>
         <item>10</item>
@@ -71,9 +74,12 @@
     <string-array name="auto_activate_entries">
         <item>Экран вкл.</item>
         <item>Телефон разблок.</item>
+        <item>Always</item>
     </string-array>
     <string-array name="auto_activate_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
+
 </resources>

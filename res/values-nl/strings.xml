@@ -28,6 +28,7 @@
         <item>90</item>
     </string-array>
     <string-array name="delay_entries">
+        <item>Immediate</item>
         <item>2 Minuten</item>
         <item>5 Minuten</item>
         <item>10 Minuten</item>
@@ -36,6 +37,7 @@
         <item>30 Minuten</item>
     </string-array>
     <string-array name="delay_values">
+        <item>0</item>
         <item>2</item>
         <item>5</item>
         <item>10</item>
@@ -74,14 +76,16 @@
     <string-array name="auto_activate_entries">
         <item>Scherm aan</item>
         <item>Phone Unlock</item>
+        <item>Always</item>
     </string-array>
     <string-array name="auto_activate_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
-    
-    <string name="plugin_name">Toggle 2G</string>
-    <string name="pref_title">Toggle 2G Opties</string>
+
+    <string name="plugin_name">Toggle2G</string>
+    <string name="pref_title">Toggle2G Opties</string>
     <string name="pref_title_enableService">Auto 2G/3G wisselen</string>
     <string name="pref_sum_enableService">Toggle 2G/3G regelt je connectie automatisch</string>
     <string name="pref_title_wait4user">Manueel 3G activeren</string>
@@ -108,24 +112,23 @@
     <string name="pref_sum_network2gselect">2G netwerk te gebruiken</string>
     <string name="pref_title_network3gselect">3G Netwerk</string>
     <string name="pref_sum_network3gselect">3G netwerk te gebruiken</string>
-    
+
     <!-- Let the use know the plugin needs to be downloaded -->
     <string name="missingPlugin_title">Notificatie Plug-in ontbreekt</string>
-    <string name="missingPlugin_message">Toggle 2G heeft een plug-in nodig hiervoor! Downloaden?</string>
+    <string name="missingPlugin_message">Toggle2G heeft een plug-in nodig hiervoor! Downloaden?</string>
     <string name="missingPlugin_download">Download</string>
     <string name="missingPlugin_cancel">Anuleer</string>
-    
+
     <!-- Used by Tasker and Locale to show current setting -->
     <string name="tasker_auto">Automatisch</string>
     <string name="tasker_2g">2G Only</string>
     <string name="tasker_3g">Allow 3G</string>
     <string name="tasker_network">Netwerk: <xliff:g id="device_name">%1$s</xliff:g></string>
-
     <string name="pref_title_2g_dataoff">2G Wanneer Data uit staat</string>
     <string name="pref_sum_2g_dataoff">Naar 2G schaken als Data uit staat</string>
     <string name="pref_title_dataoff_switch">Data off om te knn schakelen</string>
     <string name="pref_sum_dataoff_switch">Data dient uitgeshakeld te worden om te kunnen switchen</string>
     <string name="pref_title_when2Switch">Wanneer 3G inschakelen</string>
     <string name="pref_sum_when2Switch">Waardoor terug naar 3G schakelen</string>
-    
+
 </resources>

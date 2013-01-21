@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Toggle2G</string>
-    <string name="plugin_name">Toggle 2G</string>
-    <string name="pref_title">Настройки Toggle 2G</string>
+    <string name="plugin_name">Toggle2G</string>
+    <string name="pref_title">Настройки Toggle2G</string>
     <string name="pref_title_enableService">Автоуправление 2G/3G</string>
-    <string name="pref_sum_enableService">Дать право Toggle 2G управлять настройками 2G/3G автоматически</string>
+    <string name="pref_sum_enableService">Дать право Toggle2G управлять настройками 2G/3G автоматически</string>
     <string name="pref_title_wait4user">Вкл. 3G вручную</string>
     <string name="pref_sum_wait4user">Переключение на режим 3G вручную</string>
     <string name="pref_title_wait4userNotification">Вкл. с Notification</string>
@@ -30,7 +30,7 @@
     <string name="pref_title_network3gselect">Сеть 3G</string>
     <string name="pref_sum_network3gselect">Предпочтительный тип сети 3G</string>
     <string name="missingPlugin_title">Отсутствует плагин Notification</string>
-    <string name="missingPlugin_message">Для включения данной функции Toggle 2G необходим отсутствующий плагин Notification. Скачать?</string>
+    <string name="missingPlugin_message">Для включения данной функции Toggle2G необходим отсутствующий плагин Notification. Скачать?</string>
     <string name="missingPlugin_download">Скачать</string>
     <string name="missingPlugin_cancel">Отменить</string>
     <string name="tasker_auto">Автоматически</string>

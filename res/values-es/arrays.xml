@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="battery_entries">
         <item>Apagado</item>
         <item>10%</item>
@@ -25,6 +26,7 @@
         <item>90</item>
     </string-array>
     <string-array name="delay_entries">
+        <item>Immediate</item>
         <item>2 minutos</item>
         <item>5 minutos</item>
         <item>10 minutos</item>
@@ -33,6 +35,7 @@
         <item>30 minutos</item>
     </string-array>
     <string-array name="delay_values">
+        <item>0</item>
         <item>2</item>
         <item>5</item>
         <item>10</item>
@@ -71,9 +74,12 @@
     <string-array name="auto_activate_entries">
         <item>Al encender la pantalla</item>
         <item>Al desbloquear el teléfono</item>
+        <item>Always</item>
     </string-array>
     <string-array name="auto_activate_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
+
 </resources>
