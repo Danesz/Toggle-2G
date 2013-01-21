@@ -327,20 +327,21 @@ public class Toggle2G extends PreferenceActivity implements OnSharedPreferenceCh
         
         ((CheckBoxPreference) getPreferenceScreen().findPreference("enableService")).setChecked(enabled);
 
-        ((ListPreference) getPreferenceScreen().findPreference("when2Switch")).setValue(preferences.getString("when2Switch", "0"));
+        String when2Switch = preferences.getString("when2Switch", "0");
+        ((ListPreference) getPreferenceScreen().findPreference("when2Switch")).setValue(when2Switch);
         getPreferenceScreen().findPreference("when2Switch").setEnabled(enabled);
 
         boolean w4u = preferences.getBoolean("wait4user", false);
         ((CheckBoxPreference) getPreferenceScreen().findPreference("wait4user")).setChecked(w4u);
-        getPreferenceScreen().findPreference("wait4user").setEnabled(enabled);
+        getPreferenceScreen().findPreference("wait4user").setEnabled(enabled && !"2".equals(when2Switch));
         ((CheckBoxPreference) getPreferenceScreen().findPreference("wait4userNotification")).setChecked(preferences.getBoolean("wait4userNotification", false));
-        getPreferenceScreen().findPreference("wait4userNotification").setEnabled(w4u && enabled);
+        getPreferenceScreen().findPreference("wait4userNotification").setEnabled(w4u && enabled && !"2".equals(when2Switch));
 
-        boolean bat = preferences.getBoolean("delay2GEnabled", true);
-        ((CheckBoxPreference) getPreferenceScreen().findPreference("delay2GEnabled")).setChecked(bat);
-        getPreferenceScreen().findPreference("delay2GEnabled").setEnabled(enabled);
+        boolean sleep = preferences.getBoolean("delay2GEnabled", true);
+        ((CheckBoxPreference) getPreferenceScreen().findPreference("delay2GEnabled")).setChecked(sleep);
+        getPreferenceScreen().findPreference("delay2GEnabled").setEnabled(enabled && !"2".equals(when2Switch));
         ((ListPreference) getPreferenceScreen().findPreference("delay2GTime")).setValue(preferences.getString("delay2GTime", "10"));
-        getPreferenceScreen().findPreference("delay2GTime").setEnabled(bat && enabled);
+        getPreferenceScreen().findPreference("delay2GTime").setEnabled(sleep && enabled && !"2".equals(when2Switch));
 
         boolean sleep2g = preferences.getBoolean("batteryLevelEnabled", true);
         ((CheckBoxPreference) getPreferenceScreen().findPreference("batteryLevelEnabled")).setChecked(sleep2g);

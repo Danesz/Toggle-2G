@@ -291,7 +291,7 @@ public class SetPhoneSettingsV2
                             if ( mCurrentDataSetting == null && mTurnDataOff )
                             {
                                 mCurrentDataSetting = getMobileData(context);
-                                if( mCurrentDataSetting && mTurnDataOff )
+                                if( mCurrentDataSetting )
                                 {
                                     delay=5000;
                                     setMobileDataEnabled( context, false );
@@ -330,7 +330,7 @@ public class SetPhoneSettingsV2
             case MESSAGE_SET_AFTER_GET_3G:
                 // Log.i(Toggle2G.TOGGLE2G, "MESSAGE_AFTER_GET_3G");
                 handleGetPreferredNetworkTypeResponse(msg);
-                if (currentNetwork == Toggle2G.network2GSelect && settingG == setG.set3g)
+                if (currentNetwork != Toggle2G.network3GSelect && settingG == setG.set3g)
                 {
                     Log.i(Toggle2G.TOGGLE2G, "switching from " + currentNetwork + " to " + Toggle2G.network3GSelect);
                     if (telephonyManager.getCallState() == TelephonyManager.CALL_STATE_IDLE)
@@ -346,7 +346,7 @@ public class SetPhoneSettingsV2
                             if ( mCurrentDataSetting == null && mTurnDataOff )
                             {
                                 mCurrentDataSetting = getMobileData(context);
-                                if( mCurrentDataSetting && mTurnDataOff )
+                                if( mCurrentDataSetting )
                                 {
                                     delay=5000;
                                     setMobileDataEnabled( context, false );
@@ -399,7 +399,7 @@ public class SetPhoneSettingsV2
                             if ( mCurrentDataSetting == null && mTurnDataOff )
                             {
                                 mCurrentDataSetting = getMobileData(context);
-                                if( mCurrentDataSetting && mTurnDataOff )
+                                if( mCurrentDataSetting )
                                 {
                                     delay=5000;
                                     setMobileDataEnabled( context, false );
