@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="backup">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/install.update.zip/backup/Toggle2G-v0.3.2-Update.zip!/" />
+      <root url="jar://$PROJECT_DIR$/install.update.zip/backup/Toggle2G-v0.3.4-Update.zip!/" />
+      <root url="jar://$PROJECT_DIR$/install.update.zip/backup/Toggle2G-v0.3.0-Update.zip!/" />
+      <root url="jar://$PROJECT_DIR$/install.update.zip/backup/Toggle2G-v0.3.1-Update.zip!/" />
+      <root url="jar://$PROJECT_DIR$/install.update.zip/backup/Toggle2G-v0.3.3-Update.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

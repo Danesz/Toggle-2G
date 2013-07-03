@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="values">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apk/values.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
